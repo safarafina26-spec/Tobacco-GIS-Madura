@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TobacoGIS-Madura | Sistem Informasi Spasial Integrasi Harga Tembakau</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        #map { height: calc(100vh - 72px); width: 100%; z-index: 10; }
+        .legend-card { backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.92); }
+        .custom-popup .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased overflow-hidden">
+
+    <!-- Navbar Header -->
+    <header class="h-[72px] bg-[#1b4332] text-white flex items-center justify-between px-6 shadow-lg relative z-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-400/30">
+                <i class="fa-solid fa-leaf text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    TobacoGIS-Madura
+                    <span class="text-[10px] bg-emerald-500/30 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-400/40">Prototipe WebGIS</span>
+                </h1>
+                <p class="text-xs text-emerald-200/80">Monitoring Spasial Transmisi & Integrasi Pasar Tembakau Pamekasan</p>
+            </div>
+        </div>
+
+        <!-- Center Controls / Period selector -->
+        <div class="hidden md:flex items-center bg-[#133024] px-3 py-1.5 rounded-xl border border-emerald-700/50 space-x-2 text-sm">
+            <span class="text-xs text-emerald-300 font-medium"><i class="fa-regular fa-calendar-days mr-1.5"></i>Musim Tanam:</span>
+            <select id="selectPeriode" class="bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer">
+                <option value="2024-panen" class="bg-slate-800">Musim Panen 2024 (Aktif)</option>
+                <option value="2023-panen" class="bg-slate-800">Histori Panen 2023</option>
+            </select>
+        </div>
+
+        <!-- Quick Status & User Profile -->
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 text-xs bg-emerald-900/60 px-3 py-1.5 rounded-lg border border-emerald-600/40">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-emerald-200 font-medium">PostGIS & OLS Engine Aktif</span>
+            </div>
+            <div class="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-white shadow border border-emerald-500">
+                <i class="fa-solid fa-user-shield text-xs"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex h-[calc(100vh-72px)] w-full relative">
+
+        <!-- Sidebar Left: Filters, Tipologi & Legend -->
+        <aside class="w-80 bg-white border-r border-slate-200 flex flex-col z-20 shadow-md transition-all duration-300">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-emerald-700"></i> Kontrol Layer & Wilayah
+                </h2>
+                <button onclick="resetMap()" class="text-xs text-emerald-700 hover:text-emerald-800 font-medium">Reset</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-5">
+                <!-- Filter Wilayah Desa -->
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-2">Pilih Sentra Desa</label>
+                    <div class="space-y-1.5">
+                        <button onclick="filterDesa('ALL')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 transition flex items-center justify-between">
+                            <span>Semua Wilayah (Pakong)</span>
+                            <span class="text-[10px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded">3 Desa</span>
+                        </button>
+                        <button onclick="filterDesa('W01')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium hover:bg-slate-100 text-slate-700 border border-transparent transition flex items-center justify-between">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Desa Cen Lecen</span>
+                            <span class="text-[10px] text-slate-500">Gunung</span>
+                        </button>
+                        <button onclick="filterDesa('W02')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium hover:bg-slate-100 text-slate-700 border border-transparent transition flex items-center justify-between">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Desa Lebbek</span>
+                            <span class="text-[10px] text-slate-500">Tegal</span>
+                        </button>
+                        <button onclick="filterDesa('W03')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium hover:bg-slate-100 text-slate-700 border border-transparent transition flex items-center justify-between">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Desa Bicorong</span>
+                            <span class="text-[10px] text-slate-500">Sawah</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toggles Layer -->
+                <div class="pt-2 border-t border-slate-100">
+                    <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-2">Tampilan Peta</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center text-xs text-slate-700 cursor-pointer">
+                            <input type="checkbox" id="togglePoktan" checked onchange="toggleLayerPoktan()" class="rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+                            Titik Sebaran Kelompok Tani (Poktan)
+                        </label>
+                        <label class="flex items-center text-xs text-slate-700 cursor-pointer">
+                            <input type="checkbox" id="toggleKloroplet" checked onchange="toggleLayerKloroplet()" class="rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+                            Poligon Tematik Efisiensi Transmisi
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Keterangan Status Kloroplet -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2.5">
+                    <div class="font-bold text-slate-700 flex items-center justify-between">
+                        <span>Status Transmisi (Et)</span>
+                        <i class="fa-solid fa-chart-line text-slate-400"></i>
+                    </div>
+                    <div class="space-y-1.5 text-[11px]">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Efisien (Et > 1.0)</span>
+                            <span class="font-semibold text-emerald-700">Untung</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> Moderat (0.7 - 1.0)</span>
+                            <span class="font-semibold text-amber-700">Normal</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Inefisien (Et < 0.7)</span>
+                            <span class="font-semibold text-rose-700">Asimetris</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 leading-relaxed pt-1">Et = Elastisitas Transmisi Harga (% perubahan harga petani per 1% perubahan harga nasional).</p>
+                </div>
+
+                <!-- Kalkulator Simulasi Transmisi Mandiri -->
+                <div class="p-3.5 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs space-y-2">
+                    <h3 class="font-bold text-emerald-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator text-emerald-700"></i> Simulator Transmisi Harga
+                    </h3>
+                    <p class="text-[11px] text-emerald-800">Simulasikan kenaikan harga nasional terhadap respon harga lokal petani.</p>
+                    <div class="pt-1 space-y-2">
+                        <div>
+                            <span class="text-[10px] text-slate-600 block mb-1">Proyeksi Kenaikan Harga Nasional (%):</span>
+                            <input type="range" id="simulasiSlider" min="-20" max="30" value="10" step="1" oninput="updateSimulasi(this.value)" class="w-full accent-emerald-700">
+                            <div class="flex justify-between text-[10px] font-bold text-slate-700">
+                                <span>-20%</span>
+                                <span id="valSimulasi" class="text-emerald-700">+10%</span>
+                                <span>+30%</span>
+                            </div>
+                        </div>
+                        <div id="hasilSimulasi" class="p-2 bg-white rounded border border-emerald-200 text-[11px] space-y-1">
+                            <div class="flex justify-between"><span>Respon Cen Lecen (Et: 1.18):</span> <strong class="text-emerald-700">+11.8%</strong></div>
+                            <div class="flex justify-between"><span>Respon Bicorong (Et: 0.46):</span> <strong class="text-rose-600">+4.6%</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Map Canvas -->
+        <main class="flex-1 relative">
+            <div id="map"></div>
+
+            <!-- Floating Top Badges -->
+            <div class="absolute top-4 left-6 z-20 flex items-center gap-2">
+                <div class="bg-white/95 px-3 py-1.5 rounded-lg shadow-md border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-rose-500"></i> Wilayah Riset: Sentra Tembakau Pakong, Pamekasan
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Right: Analytics, Grafik & Asymmetry Alert -->
+        <aside class="w-96 bg-white border-l border-slate-200 flex flex-col z-20 shadow-lg">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-emerald-700"></i> Analisis Integrasi Pasar
+                </h2>
+                <span id="selectedWilayahBadge" class="text-xs bg-slate-100 font-semibold px-2 py-0.5 rounded text-slate-600">Desa Cen Lecen</span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Elastisitas (Et)</span>
+                        <div class="text-xl font-extrabold text-slate-800 mt-0.5" id="metricEt">1.18</div>
+                        <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-1">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Transmisi Responsif
+                        </span>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Indeks IMC</span>
+                        <div class="text-xl font-extrabold text-slate-800 mt-0.5" id="metricImc">0.42</div>
+                        <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-1">
+                            <i class="fa-solid fa-circle-check"></i> Pasar Terintegrasi
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Price Comparison Chart -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xs font-bold text-slate-700">Pergerakan Harga (Pf vs Pr)</h3>
+                        <span class="text-[10px] text-slate-500">Rupiah / Kg</span>
+                    </div>
+                    <div class="h-48 w-full">
+                        <canvas id="chartHarga"></canvas>
+                    </div>
+                </div>
+
+                <!-- Warning Notification Box -->
+                <div id="warningBox" class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-xs space-y-1.5 transition-all">
+                    <div class="flex items-center gap-2 font-bold text-emerald-800">
+                        <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                        <span id="warningTitle">Transmisi Harga Adil</span>
+                    </div>
+                    <p id="warningDesc" class="text-[11px] text-emerald-700 leading-relaxed">
+                        Di Desa Cen Lecen (Lahan Gunung), kenaikan harga nasional ditransmisikan secara penuh ke tingkat petani tembakau. Posisi tawar petani sangat kuat.
+                    </p>
+                </div>
+
+                <!-- Data Poktan Detail -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+                    <h3 class="font-bold text-slate-700 flex items-center justify-between">
+                        <span>Profil Kelembagaan Poktan</span>
+                        <i class="fa-solid fa-users text-slate-400"></i>
+                    </h3>
+                    <div id="poktanDetail" class="space-y-1 text-[11px] text-slate-600">
+                        <div><strong>Nama:</strong> <span id="pkNama">Poktan Tani Maju Cen Lecen</span></div>
+                        <div><strong>Ketua:</strong> <span id="pkKetua">H. Achmad Syafi'i</span></div>
+                        <div><strong>Anggota:</strong> <span id="pkAnggota">48 Petani Terdaftar</span></div>
+                        <div><strong>Tipologi Lahan:</strong> <span id="pkTipologi" class="text-emerald-700 font-semibold">Gunung (Tinggi)</span></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Script Application Logic -->
+    <script>
+        let map, geojsonLayer, poktanLayer;
+        let chartInstance = null;
+        let selectedWilayahId = "W01";
+        let wilayahData = [];
+        let poktanData = [];
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView([-7.038, 113.565], 13);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors | TobacoGIS-Madura',
+                maxZoom: 18
+            }).addTo(map);
+
+            
+            // Standalone offline data mode
+            wilayahData = [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id_wilayah": "W01", "nama_desa": "Desa Cen Lecen", "kecamatan": "Pakong",
+                        "jenis_lahan": "Gunung", "luas_lahan_ha": 184.5, "lat": -7.031, "lng": 113.556,
+                        "koef_transmisi_et": 1.18, "koef_vertikal_a1": 1.05, "nilai_imc": 0.42,
+                        "status_efisiensi": "Efisien (Menguntungkan Petani)", "kategori_pasar": "Terintegrasi Kuat"
+                    },
+                    "geometry": {"type": "Polygon", "coordinates": [[[113.548, -7.025], [113.565, -7.022], [113.570, -7.035], [113.555, -7.042], [113.545, -7.033], [113.548, -7.025]]]}
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id_wilayah": "W02", "nama_desa": "Desa Lebbek", "kecamatan": "Pakong",
+                        "jenis_lahan": "Tegal", "luas_lahan_ha": 210.2, "lat": -7.028, "lng": 113.577,
+                        "koef_transmisi_et": 0.78, "koef_vertikal_a1": 0.82, "nilai_imc": 0.94,
+                        "status_efisiensi": "Moderat (Cukup Efisien)", "kategori_pasar": "Terintegrasi Sedang"
+                    },
+                    "geometry": {"type": "Polygon", "coordinates": [[[113.565, -7.022], [113.585, -7.018], [113.590, -7.032], [113.575, -7.040], [113.570, -7.035], [113.565, -7.022]]]}
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id_wilayah": "W03", "nama_desa": "Desa Bicorong", "kecamatan": "Pakong",
+                        "jenis_lahan": "Sawah", "luas_lahan_ha": 165.8, "lat": -7.050, "lng": 113.564,
+                        "koef_transmisi_et": 0.46, "koef_vertikal_a1": 0.51, "nilai_imc": 1.68,
+                        "status_efisiensi": "Inefisien (Asimetris / Petani Tertinggal)", "kategori_pasar": "Terintegrasi Lemah"
+                    },
+                    "geometry": {"type": "Polygon", "coordinates": [[[113.555, -7.042], [113.575, -7.040], [113.580, -7.058], [113.558, -7.062], [113.548, -7.050], [113.555, -7.042]]]}
+                }
+            ];
+            poktanData = [
+                {"id_poktan": "PK01", "nama_poktan": "Poktan Tani Maju Cen Lecen", "id_wilayah": "W01", "ketua": "H. Achmad Syafi'i", "jumlah_anggota": 48, "lat": -7.030, "lng": 113.554, "nama_desa": "Desa Cen Lecen"},
+                {"id_poktan": "PK02", "nama_poktan": "Poktan Tunas Tembakau Lebbek", "id_wilayah": "W02", "ketua": "H. Moh. Fadil", "jumlah_anggota": 55, "lat": -7.027, "lng": 113.579, "nama_desa": "Desa Lebbek"},
+                {"id_poktan": "PK03", "nama_poktan": "Poktan Makmur Subur Bicorong", "id_wilayah": "W03", "ketua": "Drs. H. Kholil", "jumlah_anggota": 42, "lat": -7.051, "lng": 113.562, "nama_desa": "Desa Bicorong"}
+            ];
+            renderGeoJSON({"type": "FeatureCollection", "features": wilayahData});
+            renderPoktan(poktanData);
+            selectWilayah("W01");
+    
+        }
+
+        async function loadDataFromAPI() {
+            try {
+                const resWilayah = await fetch('/api/wilayah');
+                const geojsonData = await resWilayah.json();
+                wilayahData = geojsonData.features;
+
+                renderGeoJSON(geojsonData);
+
+                const resPoktan = await fetch('/api/poktan');
+                poktanData = await resPoktan.json();
+                renderPoktan(poktanData);
+
+                selectWilayah("W01");
+            } catch (err) {
+                console.error("Gagal mengambil data:", err);
+            }
+        }
+
+        function getColorByEt(et) {
+            return et > 1.0 ? '#10b981' :
+                   et >= 0.7 ? '#f59e0b' : '#ef4444';
+        }
+
+        function renderGeoJSON(geojsonData) {
+            if (geojsonLayer) map.removeLayer(geojsonLayer);
+
+            geojsonLayer = L.geoJSON(geojsonData, {
+                style: function(feature) {
+                    const et = feature.properties.koef_transmisi_et;
+                    return {
+                        fillColor: getColorByEt(et),
+                        weight: 2,
+                        opacity: 1,
+                        color: '#ffffff',
+                        dashArray: '3',
+                        fillOpacity: 0.65
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    const p = feature.properties;
+                    layer.on({
+                        mouseover: function(e) {
+                            const l = e.target;
+                            l.setStyle({ weight: 4, fillOpacity: 0.85, color: '#1b4332' });
+                            l.bringToFront();
+                        },
+                        mouseout: function(e) {
+                            geojsonLayer.resetStyle(e.target);
+                        },
+                        click: function() {
+                            selectWilayah(p.id_wilayah);
+                        }
+                    });
+
+                    const popupHtml = `
+                        <div class="p-1">
+                            <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-1.5 flex justify-between items-center">
+                                <span>` + p.nama_desa + `</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded ` + (p.koef_transmisi_et > 1 ? 'bg-emerald-100 text-emerald-800':'bg-rose-100 text-rose-800') + `">
+                                    ` + p.jenis_lahan + `
+                                </span>
+                            </div>
+                            <div class="text-[11px] space-y-1 text-slate-600">
+                                <div><strong>Elastisitas (Et):</strong> <span class="font-bold ` + (p.koef_transmisi_et > 1 ? 'text-emerald-700':'text-rose-600') + `">` + p.koef_transmisi_et + `</span></div>
+                                <div><strong>Indeks IMC:</strong> ` + p.nilai_imc + `</div>
+                                <div><strong>Status:</strong> ` + p.status_efisiensi + `</div>
+                            </div>
+                            <button onclick="selectWilayah('` + p.id_wilayah + `')" class="mt-2 w-full text-center bg-[#1b4332] text-white text-[10px] py-1 rounded hover:bg-emerald-800 font-semibold">
+                                Tampilkan Analisis Detail
+                            </button>
+                        </div>
+                    `;
+                    layer.bindPopup(popupHtml, { className: 'custom-popup' });
+                }
+            }).addTo(map);
+        }
+
+        function renderPoktan(poktanList) {
+            if (poktanLayer) map.removeLayer(poktanLayer);
+            const markers = [];
+            poktanList.forEach(pk => {
+                const marker = L.circleMarker([pk.lat, pk.lng], {
+                    radius: 7,
+                    fillColor: '#0284c7',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                }).bindPopup(`
+                    <div class="text-xs">
+                        <strong class="text-slate-800">` + pk.nama_poktan + `</strong><br>
+                        <span class="text-slate-500">Ketua: ` + pk.ketua + `</span><br>
+                        <span class="text-slate-500">Anggota: ` + pk.jumlah_anggota + ` orang</span>
+                    </div>
+                `);
+                markers.push(marker);
+            });
+            poktanLayer = L.layerGroup(markers).addTo(map);
+        }
+
+        async function selectWilayah(id_wilayah) {
+            selectedWilayahId = id_wilayah;
+            const target = wilayahData.find(f => f.properties.id_wilayah === id_wilayah);
+            if (!target) return;
+            const p = target.properties;
+
+            document.getElementById('selectedWilayahBadge').innerText = p.nama_desa;
+            document.getElementById('metricEt').innerText = p.koef_transmisi_et;
+            document.getElementById('metricImc').innerText = p.nilai_imc;
+
+            const wBox = document.getElementById('warningBox');
+            const wTitle = document.getElementById('warningTitle');
+            const wDesc = document.getElementById('warningDesc');
+
+            if (p.koef_transmisi_et > 1.0) {
+                wBox.className = "p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-xs space-y-1.5";
+                wTitle.className = "text-emerald-800 font-bold";
+                wTitle.innerHTML = "<i class='fa-solid fa-shield-halved text-emerald-600 mr-1.5'></i> Pasar Efisien & Transparan";
+                wDesc.className = "text-[11px] text-emerald-700 leading-relaxed";
+                wDesc.innerText = "Di " + p.nama_desa + " (" + p.jenis_lahan + "), harga tembakau petani merespon secara elastis fluktuasi harga acuan nasional. Asimetri informasi rendah.";
+            } else if (p.koef_transmisi_et >= 0.7) {
+                wBox.className = "p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-xs space-y-1.5";
+                wTitle.className = "text-amber-800 font-bold";
+                wTitle.innerHTML = "<i class='fa-solid fa-triangle-exclamation text-amber-600 mr-1.5'></i> Transmisi Moderat";
+                wDesc.className = "text-[11px] text-amber-700 leading-relaxed";
+                wDesc.innerText = "Di " + p.nama_desa + " (" + p.jenis_lahan + "), transmisi harga berjalan cukup baik, namun sebagian margin keuntungan diserap oleh perantara.";
+            } else {
+                wBox.className = "p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-xs space-y-1.5";
+                wTitle.className = "text-rose-800 font-bold";
+                wTitle.innerHTML = "<i class='fa-solid fa-circle-exclamation text-rose-600 mr-1.5'></i> Peringatan: Asimetri Informasi Tinggi";
+                wDesc.className = "text-[11px] text-rose-700 leading-relaxed";
+                wDesc.innerText = "Di " + p.nama_desa + " (" + p.jenis_lahan + "), elastisitas transmisi sangat rendah (" + p.koef_transmisi_et + "). Kenaikan harga di tingkat nasional tidak dirasakan petani lokal. Disarankan intervensi harga dasar oleh pemerintah/dinas.";
+            }
+
+            const pk = poktanData.find(k => k.id_wilayah === id_wilayah);
+            if (pk) {
+                document.getElementById('pkNama').innerText = pk.nama_poktan;
+                document.getElementById('pkKetua').innerText = pk.ketua;
+                document.getElementById('pkAnggota').innerText = pk.jumlah_anggota + " Petani Terdaftar";
+                document.getElementById('pkTipologi').innerText = p.jenis_lahan;
+            }
+
+            map.flyTo([p.lat, p.lng], 14, { duration: 0.8 });
+            loadChart(id_wilayah);
+        }
+
+        async function loadChart(id_wilayah) {
+            const mockHarga = {
+                "W01": [{"bulan":"Mei","harga_petani":58000,"harga_nasional":68000},{"bulan":"Juni","harga_petani":62000,"harga_nasional":71000},{"bulan":"Juli","harga_petani":67000,"harga_nasional":74000},{"bulan":"Agustus","harga_petani":73000,"harga_nasional":79000},{"bulan":"September","harga_petani":82000,"harga_nasional":86000},{"bulan":"Oktober","harga_petani":88000,"harga_nasional":91000}],
+                "W02": [{"bulan":"Mei","harga_petani":46000,"harga_nasional":68000},{"bulan":"Juni","harga_petani":49000,"harga_nasional":71000},{"bulan":"Juli","harga_petani":52000,"harga_nasional":74000},{"bulan":"Agustus","harga_petani":56000,"harga_nasional":79000},{"bulan":"September","harga_petani":60000,"harga_nasional":86000},{"bulan":"Oktober","harga_petani":64000,"harga_nasional":91000}],
+                "W03": [{"bulan":"Mei","harga_petani":38000,"harga_nasional":68000},{"bulan":"Juni","harga_petani":40000,"harga_nasional":71000},{"bulan":"Juli","harga_petani":41500,"harga_nasional":74000},{"bulan":"Agustus","harga_petani":43000,"harga_nasional":79000},{"bulan":"September","harga_petani":45000,"harga_nasional":86000},{"bulan":"Oktober","harga_petani":47000,"harga_nasional":91000}]
+            };
+            const data = mockHarga[id_wilayah] || mockHarga["W01"];
+
+            const labels = data.map(d => d.bulan);
+            const dataPetani = data.map(d => d.harga_petani);
+            const dataNasional = data.map(d => d.harga_nasional);
+
+            const ctx = document.getElementById('chartHarga').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Harga Petani (Pf)',
+                            data: dataPetani,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Harga Acuan Nasional (Pr)',
+                            data: dataNasional,
+                            borderColor: '#3b82f6',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                font: { size: 9 },
+                                callback: val => 'Rp ' + (val/1000) + 'k'
+                            }
+                        },
+                        x: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function filterDesa(val) {
+            if (val === 'ALL') {
+                resetMap();
+            } else {
+                selectWilayah(val);
+            }
+        }
+
+        function resetMap() {
+            map.flyTo([-7.038, 113.565], 13);
+        }
+
+        function toggleLayerPoktan() {
+            const chk = document.getElementById('togglePoktan').checked;
+            if (chk) map.addLayer(poktanLayer);
+            else map.removeLayer(poktanLayer);
+        }
+
+        function toggleLayerKloroplet() {
+            const chk = document.getElementById('toggleKloroplet').checked;
+            if (chk) map.addLayer(geojsonLayer);
+            else map.removeLayer(geojsonLayer);
+        }
+
+        function updateSimulasi(val) {
+            const num = parseFloat(val);
+            document.getElementById('valSimulasi').innerText = (num > 0 ? '+' : '') + num + '%';
+            
+            const respCen = (num * 1.18).toFixed(1);
+            const respBic = (num * 0.46).toFixed(1);
+
+            document.getElementById('hasilSimulasi').innerHTML = `
+                <div class="flex justify-between"><span>Respon Cen Lecen (Et: 1.18):</span> <strong class="` + (respCen >= 0 ? 'text-emerald-700':'text-rose-600') + `">` + (respCen >= 0 ? '+' : '') + respCen + `%</strong></div>
+                <div class="flex justify-between"><span>Respon Bicorong (Et: 0.46):</span> <strong class="` + (respBic >= 0 ? 'text-rose-600':'text-rose-800') + `">` + (respBic >= 0 ? '+' : '') + respBic + `%</strong></div>
+            `;
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>
