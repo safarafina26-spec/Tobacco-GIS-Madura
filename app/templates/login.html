@@ -1,191 +1,423 @@
 <!DOCTYPE html>
-<html lang="id">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk | TobacoGIS-Madura</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style>
-        .tobacco-gradient {
-            background: linear-gradient(135deg, #1b4332 0%, #081c15 100%);
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <meta content="mobile_stack" name="shell-type"/>
+  <title>Login Telemetri | TobaccoGIS Madura</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary-container": "#12533a",
+            "on-background": "#e2e3e0",
+            "error": "#ffb4ab",
+            "primary": "#f2be8c",
+            "surface-bright": "#383a38",
+            "surface-dim": "#121413",
+            "on-error-container": "#ffdad6",
+            "secondary-fixed-dim": "#95d4b3",
+            "inverse-on-surface": "#2f3130",
+            "secondary-fixed": "#b1f0ce",
+            "surface": "#121413",
+            "outline-variant": "#50453b",
+            "primary-container": "#d4a373",
+            "on-primary-fixed-variant": "#623f18",
+            "surface-container-high": "#282a29",
+            "tertiary-fixed-dim": "#ffb4a2",
+            "surface-container-low": "#1a1c1b",
+            "secondary": "#95d4b3",
+            "surface-container": "#1e201f",
+            "error-container": "#93000a",
+            "tertiary-fixed": "#ffdad2",
+            "on-secondary-container": "#87c6a5",
+            "surface-tint": "#f0bd8b",
+            "on-primary-fixed": "#2c1600",
+            "on-tertiary-fixed-variant": "#83260e",
+            "on-tertiary": "#621100",
+            "tertiary": "#ffb6a5",
+            "on-tertiary-fixed": "#3c0700",
+            "on-secondary": "#003824",
+            "primary-fixed": "#ffdcbd",
+            "surface-container-lowest": "#0d0f0e",
+            "surface-variant": "#333534",
+            "primary-fixed-dim": "#f0bd8b",
+            "outline": "#9c8e82",
+            "on-secondary-fixed-variant": "#0e5138",
+            "on-primary": "#482904",
+            "on-tertiary-container": "#7a2008",
+            "inverse-surface": "#e2e3e0",
+            "on-surface-variant": "#d4c4b7",
+            "background": "#121413",
+            "on-secondary-fixed": "#002114",
+            "tertiary-container": "#ff8d70",
+            "surface-container-highest": "#333534",
+            "on-surface": "#e2e3e0",
+            "inverse-primary": "#7d562d",
+            "on-error": "#690005",
+            "on-primary-container": "#5b3912"
+          },
+          fontFamily: {
+            "headline-md": ["Space Grotesk"],
+            "body-sm": ["Geist"],
+            "telemetry-label": ["Space Grotesk"],
+            "body-md": ["Geist"],
+            "title-sm": ["Space Grotesk"],
+            "headline-xl-mobile": ["Space Grotesk"],
+            "body-lg": ["Geist"],
+            "code-econometric": ["Geist"],
+            "headline-lg": ["Space Grotesk"],
+            "metric-display": ["Space Grotesk"]
+          }
         }
-    </style>
+      }
+    };
+  </script>
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans">
-    <!-- Background Glow Effects -->
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-green-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="w-full max-w-md z-10">
-        <!-- Logo & Title -->
-        <div class="text-center mb-8">
-            <div class="inline-flex w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 items-center justify-center text-emerald-400 mb-3 shadow-lg shadow-emerald-950/50">
-                <i class="fa-solid fa-leaf text-3xl"></i>
-            </div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight">TobacoGIS-Madura</h1>
-            <p class="text-xs text-emerald-300/80 mt-1">Sistem Informasi Spasial Integrasi & Transmisi Harga Tembakau</p>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen">
+  <header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
+    <div class="h-16 px-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 pl-1">
+          <span class="material-symbols-outlined text-primary text-[22px]">radar</span>
+          <span class="font-headline-md text-lg uppercase tracking-wider text-primary font-bold">TOBACCO<span class="text-secondary">GIS</span></span>
+          <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] uppercase font-bold tracking-widest ml-1">MDR</span>
         </div>
-
-        <!-- Login Card -->
-        <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700 rounded-2xl p-7 shadow-2xl shadow-black/60">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-6">
-                <div>
-                    <h2 class="text-lg font-bold text-white">Autentikasi Pengguna</h2>
-                    <p class="text-xs text-slate-400">Silakan login untuk mengakses dasbor spasial</p>
-                </div>
-                <div class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold uppercase tracking-wider">
-                    Secure GIS
-                </div>
-            </div>
-
-            <!-- Error alert -->
-            <div id="errorAlert" class="hidden mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-                <i class="fa-solid fa-circle-exclamation text-rose-400 text-sm"></i>
-                <span id="errorMessage">Username atau password tidak sesuai.</span>
-            </div>
-
-            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1.5" for="username">
-                        Username / ID Petugas
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">
-                            <i class="fa-solid fa-user"></i>
-                        </span>
-                        <input type="text" id="username" required
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
-                            placeholder="admin / operator / peneliti">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1.5" for="password">
-                        Kata Sandi
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="password" id="password" required
-                            class="w-full pl-10 pr-10 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
-                            placeholder="••••••••">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition">
-                            <i id="toggleIcon" class="fa-regular fa-eye text-sm"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between text-xs pt-1">
-                    <label class="flex items-center text-slate-400 cursor-pointer">
-                        <input type="checkbox" id="remember" class="w-3.5 h-3.5 rounded border-slate-700 text-emerald-600 focus:ring-0 bg-slate-900">
-                        <span class="ml-2">Ingat saya</span>
-                    </label>
-                    <a href="javascript:void(0)" onclick="alert('Silakan hubungi administrator atau gunakan kredensial demo di bawah.')" class="text-emerald-400 hover:underline">Bantuan login?</a>
-                </div>
-
-                <button type="submit" id="submitBtn"
-                    class="w-full mt-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm shadow-lg shadow-emerald-700/30 transition duration-150 flex items-center justify-center gap-2">
-                    <span>Masuk ke Sistem GIS</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </form>
-
-            <!-- Demo Credentials Helper -->
-            <div class="mt-6 pt-5 border-t border-slate-700/60">
-                <p class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-key text-emerald-400"></i> Akun Demo Tersedia:
-                </p>
-                <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="fillCredential('admin', 'admin123')"
-                        class="px-2 py-1.5 bg-slate-900/80 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-[11px] text-center transition">
-                        <div class="font-bold text-emerald-400">Admin</div>
-                        <div class="text-[10px] text-slate-400">admin123</div>
-                    </button>
-                    <button type="button" onclick="fillCredential('operator', 'operator123')"
-                        class="px-2 py-1.5 bg-slate-900/80 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-[11px] text-center transition">
-                        <div class="font-bold text-amber-400">Operator</div>
-                        <div class="text-[10px] text-slate-400">operator123</div>
-                    </button>
-                    <button type="button" onclick="fillCredential('peneliti', 'peneliti123')"
-                        class="px-2 py-1.5 bg-slate-900/80 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-[11px] text-center transition">
-                        <div class="font-bold text-sky-400">Peneliti</div>
-                        <div class="text-[10px] text-slate-400">peneliti123</div>
-                    </button>
-                </div>
-            </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="px-2.5 py-1 rounded-lg bg-surface-container-low text-secondary flex items-center gap-1.5 text-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+          <span class="font-telemetry-label uppercase tracking-wider font-semibold">ONLINE NODE</span>
         </div>
-
-        <!-- Footer -->
-        <div class="text-center mt-6 text-xs text-slate-500">
-            &copy; 2024 TobacoGIS-Madura &bull; Sentra Agribisnis Tembakau Pamekasan
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
         </div>
+      </div>
     </div>
+  </header>
 
-    <script>
-        function fillCredential(user, pass) {
-            document.getElementById('username').value = user;
-            document.getElementById('password').value = pass;
-            hideError();
+  <main class="flex flex-col relative w-full flex-1 bg-surface pt-20 pb-8 px-4 max-w-lg mx-auto">
+    <div class="flex flex-col w-full space-y-4">
+      <!-- Live Status Telemetry Ribbon -->
+      <div class="flex items-center justify-between rounded-lg bg-surface-container-low px-3 py-1.5 text-on-surface-variant">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="w-2 h-2 rounded-full bg-secondary animate-pulse shrink-0"></span>
+          <span class="font-telemetry-label text-xs tracking-widest text-secondary truncate uppercase font-semibold">SERVER // FASTAPI NODE v3.4</span>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <span class="material-symbols-outlined text-[14px] text-primary">security</span>
+          <span class="font-telemetry-label text-xs text-primary uppercase font-medium">TLS 256-BIT</span>
+        </div>
+      </div>
+
+      <!-- Hero Header -->
+      <div class="relative overflow-hidden rounded-xl bg-surface-container-low p-5 shadow-xl">
+        <div class="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-6 -bottom-6 w-36 h-36 rounded-full bg-secondary/10 blur-2xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col gap-1">
+          <div class="flex items-center gap-1.5">
+            <div class="w-7 h-7 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[18px]">travel_explore</span>
+            </div>
+            <span class="font-telemetry-label text-xs uppercase tracking-widest text-outline font-semibold">PORTAL TELEMETRI & VERIFIKASI</span>
+          </div>
+          <h1 class="font-headline-md text-2xl font-bold text-on-surface mt-1">
+            Masuk Konsol <span class="text-primary">TobaccoGIS</span>
+          </h1>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            Autentikasi multi-peran untuk petani poktan, surveyor lapangan, dan analis data rantai pasok tembakau Kecamatan Pakong, Pamekasan.
+          </p>
+          <div class="flex items-center gap-1.5 pt-2 flex-wrap">
+            <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-[10px] font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">location_on</span> LEBBEK
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-[10px] font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">location_on</span> CEN LECEN
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-[10px] font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">location_on</span> BICORONG
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="flex flex-col gap-1.5">
+        <label class="font-telemetry-label text-xs uppercase tracking-wider text-outline px-1 font-semibold">
+          PILIH PERAN OPERASIONAL // ROLE SELECTOR
+        </label>
+        <div class="grid grid-cols-3 gap-1 bg-surface-container-lowest p-1 rounded-xl" id="role-selector-group">
+          <button type="button" data-role="petani" onclick="selectRole('petani')"
+            class="role-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-200 bg-primary-container/20 text-primary shadow-sm font-semibold">
+            <span class="material-symbols-outlined text-[20px]">psychology_alt</span>
+            <span class="text-xs mt-0.5 tracking-tight">Petani Poktan</span>
+          </button>
+          <button type="button" data-role="surveyor" onclick="selectRole('surveyor')"
+            class="role-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+            <span class="text-xs mt-0.5 tracking-tight">Surveyor</span>
+          </button>
+          <button type="button" data-role="analis" onclick="selectRole('analis')"
+            class="role-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined text-[20px]">analytics</span>
+            <span class="text-xs mt-0.5 tracking-tight">Analis Data</span>
+          </button>
+        </div>
+        <div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-1.5 text-on-surface-variant text-xs" id="role-caption">
+          <span class="material-symbols-outlined text-[16px] text-primary shrink-0">info</span>
+          <span class="leading-snug">Hak akses: Cek harga acuan BEP, pelaporan transaksi tebasan, dan simulasi margin bandul.</span>
+        </div>
+      </div>
+
+      <!-- Auth Form Card -->
+      <div class="rounded-xl bg-surface-container p-5 flex flex-col gap-4 shadow-2xl relative">
+        <div id="errorBox" class="hidden p-3 rounded-lg bg-error-container text-on-error-container text-xs flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">error</span>
+          <span id="errorMsg">Autentikasi gagal.</span>
+        </div>
+
+        <form class="flex flex-col gap-4" id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <label class="font-telemetry-label text-xs uppercase text-on-surface tracking-wider font-semibold" for="user-identity" id="identifier-label">
+                NOMOR INDUK KEPENDUDUKAN (NIK 16-DIGIT)
+              </label>
+              <span class="text-[10px] font-semibold text-secondary">TERVALIDASI DUKCAPIL</span>
+            </div>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-primary text-[20px] pointer-events-none">badge</span>
+              <input class="w-full bg-surface-container-lowest text-on-surface font-code-econometric text-sm pl-10 pr-4 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner"
+                id="user-identity" name="identity" placeholder="admin / operator / peneliti" required type="text" value="3528042008890001"/>
+            </div>
+            <span class="text-[11px] text-on-surface-variant" id="identifier-helper">
+              Gunakan 16 angka NIK atau username demo (admin / operator / peneliti).
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <label class="font-telemetry-label text-xs uppercase text-on-surface tracking-wider font-semibold" for="user-credential" id="credential-label">
+                PIN AKSES TELEMETRI (6 DIGIT)
+              </label>
+              <a class="text-[11px] text-primary hover:underline uppercase font-semibold" href="javascript:void(0)" onclick="quickVerifyPoktan()">
+                PAKAI DEMO
+              </a>
+            </div>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-primary text-[20px] pointer-events-none">lock</span>
+              <input class="w-full bg-surface-container-lowest text-on-surface font-code-econometric text-sm pl-10 pr-12 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner tracking-widest"
+                id="user-credential" maxlength="32" name="credential" placeholder="••••••" required type="password" value="782910"/>
+              <button aria-label="Toggle password visibility" class="absolute right-3 text-on-surface-variant hover:text-on-surface p-1" onclick="togglePasswordVisibility()" type="button">
+                <span class="material-symbols-outlined text-[20px]" id="eye-icon">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="font-telemetry-label text-xs uppercase text-on-surface tracking-wider font-semibold" for="work-center">
+              SENTRA KERJA TELEMETRI // GRID PAMEKASAN
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-secondary text-[20px] pointer-events-none">grid_view</span>
+              <select class="w-full appearance-none bg-surface-container-lowest text-on-surface text-xs pl-10 pr-10 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="work-center">
+                <option value="pakong-all">Kec. Pakong - Seluruh Sub-Distrik (Lebbek, Cen Lecen, Bicorong)</option>
+                <option selected value="lebbek-central">Sentra Lebbek (Timbangan Posko Utama & Bandul Pantau)</option>
+                <option value="cen-lecen-hill">Sentra Cen Lecen (Area Tembakau Gunung & Uji Refraktometer)</option>
+                <option value="bicorong-valley">Sentra Bicorong (Pergudangan & Jalur Logistik Distribusi)</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input checked class="w-4 h-4 rounded bg-surface-container-lowest text-primary accent-primary focus:ring-0" id="remember-me" type="checkbox"/>
+              <span class="text-xs text-on-surface-variant">Simpan sesi perangkat</span>
+            </label>
+            <div class="flex items-center gap-1 text-secondary text-xs font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              <span>KONSOL OFFLINE SIAP</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 pt-1">
+            <button class="w-full bg-primary-container text-on-primary-container hover:bg-primary font-bold text-sm tracking-wider uppercase py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-[0.98]" id="submit-btn" type="submit">
+              <span class="material-symbols-outlined text-[20px]">login</span>
+              <span>MASUK KE KONSOL TELEMETRI</span>
+            </button>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg bg-surface-container-high text-on-surface hover:text-primary transition-colors text-xs font-semibold" onclick="triggerBiometricAuth('fingerprint')" type="button">
+                <span class="material-symbols-outlined text-[18px] text-secondary">fingerprint</span>
+                <span>SIDIK JARI</span>
+              </button>
+              <button class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg bg-surface-container-high text-on-surface hover:text-primary transition-colors text-xs font-semibold" onclick="triggerBiometricAuth('face')" type="button">
+                <span class="material-symbols-outlined text-[18px] text-primary">face</span>
+                <span>FACE SCAN</span>
+              </button>
+            </div>
+
+            <button class="w-full py-2.5 rounded-lg bg-secondary-container text-on-secondary-container hover:opacity-95 text-xs font-semibold flex items-center justify-center gap-2 transition-colors" onclick="quickVerifyPoktan()" type="button">
+              <span class="material-symbols-outlined text-[16px]">verified</span>
+              <span>Masuk Cepat via NIK Poktan Terverifikasi</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Telemetry Indicators -->
+      <div class="grid grid-cols-2 gap-2">
+        <div class="rounded-lg bg-surface-container-low p-3 flex flex-col gap-1">
+          <div class="flex items-center justify-between text-on-surface-variant text-xs">
+            <span class="font-telemetry-label uppercase font-semibold">INDEKS IMC PASAR</span>
+            <span class="material-symbols-outlined text-[16px] text-secondary">trending_up</span>
+          </div>
+          <div class="font-headline-md text-xl font-bold text-secondary">0.248</div>
+          <span class="text-[10px] text-outline font-semibold">KONDISI: INTEGRASI KUAT</span>
+        </div>
+        <div class="rounded-lg bg-surface-container-low p-3 flex flex-col gap-1">
+          <div class="flex items-center justify-between text-on-surface-variant text-xs">
+            <span class="font-telemetry-label uppercase font-semibold">BEP ACUAN TEPAT</span>
+            <span class="material-symbols-outlined text-[16px] text-primary">price_change</span>
+          </div>
+          <div class="font-headline-md text-xl font-bold text-primary">Rp 64.200</div>
+          <span class="text-[10px] text-outline font-semibold">PER KG TEMBAKAU KERING</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center gap-1 text-center pt-2 text-xs text-outline">
+        <p>PERDA PERLINDUNGAN TEMBAKAU MADURA NO. 2/2022 &bull; KEC. PAKONG, PAMEKASAN</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const roleConfig = {
+      petani: {
+        identifierLabel: "NOMOR INDUK KEPENDUDUKAN (NIK 16-DIGIT)",
+        identifierPlaceholder: "3528xxxxxxxxxxxx",
+        identifierHelper: "Gunakan 16 angka NIK e-KTP terdaftar di Simluhtan atau SK Poktan Pakong.",
+        credentialLabel: "PIN AKSES TELEMETRI (6 DIGIT)",
+        credentialPlaceholder: "••••••",
+        defaultId: "3528042008890001",
+        defaultPin: "782910",
+        caption: "Hak akses: Cek harga acuan BEP, pelaporan transaksi tebasan, dan simulasi margin bandul."
+      },
+      surveyor: {
+        identifierLabel: "ID SURVEYOR RESMI DINAS // PAMEKASAN",
+        identifierPlaceholder: "SRV-PKG-2024-xxx",
+        identifierHelper: "ID terverifikasi Dinas Perkebunan Pamekasan untuk inspeksi pasar & timbangan.",
+        credentialLabel: "KATA SANDI ENKRIPSI SURVEYOR",
+        credentialPlaceholder: "Masukkan kata sandi terverifikasi",
+        defaultId: "SRV-PKG-8841-LEBBEK",
+        defaultPin: "operator123",
+        caption: "Hak akses: Input uji kadar air refraktometer, kalibrasi tera timbangan, verifikasi bandul gudang."
+      },
+      analis: {
+        identifierLabel: "EMAIL RESMI DINAS / AKADEMISI",
+        identifierPlaceholder: "analis.agro@pamekasan.go.id",
+        identifierHelper: "Akses terbatas untuk Bappeda, Dinas Pertanian, dan Peneliti Riset Ekonometrika.",
+        credentialLabel: "SECURITY TOKEN / MASTER PASSWORD",
+        credentialPlaceholder: "Masukkan token autentikasi 2FA",
+        defaultId: "admin",
+        defaultPin: "admin123",
+        caption: "Hak akses: Audit ekonometrika OLS, deteksi anomali oligopsoni, ekspor layer WebGIS spasial."
+      }
+    };
+
+    let currentRole = "petani";
+
+    function selectRole(role) {
+      currentRole = role;
+      const buttons = document.querySelectorAll('.role-btn');
+      buttons.forEach(btn => {
+        const isCurrent = btn.getAttribute('data-role') === role;
+        if (isCurrent) {
+          btn.className = "role-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-200 bg-primary-container/20 text-primary shadow-sm font-semibold";
+        } else {
+          btn.className = "role-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface";
         }
+      });
 
-        function togglePasswordVisibility() {
-            const pwd = document.getElementById('password');
-            const icon = document.getElementById('toggleIcon');
-            if (pwd.type === 'password') {
-                pwd.type = 'text';
-                icon.className = 'fa-regular fa-eye-slash text-sm';
-            } else {
-                pwd.type = 'password';
-                icon.className = 'fa-regular fa-eye text-sm';
-            }
+      const config = roleConfig[role];
+      document.getElementById('identifier-label').textContent = config.identifierLabel;
+      document.getElementById('user-identity').placeholder = config.identifierPlaceholder;
+      document.getElementById('user-identity').value = config.defaultId;
+      document.getElementById('identifier-helper').textContent = config.identifierHelper;
+      document.getElementById('credential-label').textContent = config.credentialLabel;
+      document.getElementById('user-credential').placeholder = config.credentialPlaceholder;
+      document.getElementById('user-credential').value = config.defaultPin;
+      
+      const captionEl = document.getElementById('role-caption');
+      captionEl.querySelector('span:last-child').textContent = config.caption;
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('user-credential');
+      const icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const errBox = document.getElementById('errorBox');
+      errBox.classList.add('hidden');
+
+      const btn = document.getElementById('submit-btn');
+      const identity = document.getElementById('user-identity').value.trim();
+      const credential = document.getElementById('user-credential').value;
+
+      btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>MEMVERIFIKASI...</span>`;
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: identity, password: credential })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">task_alt</span><span>TEROTENTIKASI!</span>`;
+          window.location.href = '/';
+        } else {
+          errBox.classList.remove('hidden');
+          document.getElementById('errorMsg').innerText = data.detail || 'Verifikasi kredensial gagal.';
+          btn.disabled = false;
+          btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">login</span><span>MASUK KE KONSOL TELEMETRI</span>`;
         }
+      } catch (err) {
+        errBox.classList.remove('hidden');
+        document.getElementById('errorMsg').innerText = 'Koneksi ke server terputus.';
+        btn.disabled = false;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">login</span><span>MASUK KE KONSOL TELEMETRI</span>`;
+      }
+    }
 
-        function showError(msg) {
-            const alertBox = document.getElementById('errorAlert');
-            document.getElementById('errorMessage').innerText = msg;
-            alertBox.classList.remove('hidden');
-        }
+    function triggerBiometricAuth(type) {
+      alert("Sensor biometrik aktif: Mengakses profil tersimpan untuk wilayah Pakong.");
+      quickVerifyPoktan();
+    }
 
-        function hideError() {
-            document.getElementById('errorAlert').classList.add('hidden');
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            hideError();
-
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const submitBtn = document.getElementById('submitBtn');
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memverifikasi...';
-
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    window.location.href = '/';
-                } else {
-                    showError(data.detail || 'Username atau password salah.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>Masuk ke Sistem GIS</span> <i class="fa-solid fa-arrow-right text-xs"></i>';
-                }
-            } catch (err) {
-                showError('Terjadi kesalahan jaringan atau server tidak merespon.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>Masuk ke Sistem GIS</span> <i class="fa-solid fa-arrow-right text-xs"></i>';
-            }
-        }
-    </script>
+    function quickVerifyPoktan() {
+      selectRole('petani');
+      document.getElementById('user-identity').value = "3528042008890001";
+      document.getElementById('user-credential').value = "782910";
+      document.getElementById('auth-form').dispatchEvent(new Event('submit'));
+    }
+  </script>
 </body>
 </html>
